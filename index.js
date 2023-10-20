@@ -51,7 +51,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/products/brand/id", async (req, res) => {
+    app.get("/products/:brand/:id", async (req, res) => {
       const id = req.params.id;
       const query = { brand: id };
       const result = await productsCollection.findOne(query);
@@ -64,6 +64,39 @@ async function run() {
       const result = await productsCollection.insertOne(newProduct);
       res.send(result);
     });
+
+    // app.get("/products/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) };
+    //   const result = await productsCollection.findOne(query);
+    //   res.send(result);
+    // });
+
+    app.put(`/products/:brand/:id/:name`, async (req, res) => {
+      const brand = req.params.brand;
+      const id = req.params.id;
+      const name = req.params.name;
+      const filter = { brand, id, name };
+      const options = { upsert: true };
+      const updateCoffee = req.body;
+      const products = {
+        $set: {
+          photo: updateCoffee.photo,
+          name: updateCoffee.name,
+          brand: updateCoffee.brand,
+          type: updateCoffee.type,
+          price: updateCoffee.price,
+          description: updateCoffee.description,
+        },
+      };
+      const result = await productsCollection.updateOne(
+        filter,
+        products,
+        options
+      );
+      res.send(result);
+    });
+
     app.post("/cart", async (req, res) => {
       const newCart = req.body;
       console.log(newCart);
