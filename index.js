@@ -72,11 +72,11 @@ async function run() {
     //   res.send(result);
     // });
 
-    app.put(`/products/:brand/:id/:name`, async (req, res) => {
+    app.put(`/products/:brand/:id`, async (req, res) => {
       const brand = req.params.brand;
       const id = req.params.id;
-      const name = req.params.name;
-      const filter = { brand, id, name };
+      // const name = req.params.name;
+      const filter = { id, brand };
       const options = { upsert: true };
       const updateCoffee = req.body;
       const products = {
@@ -93,6 +93,10 @@ async function run() {
         filter,
         products,
         options
+      );
+
+      console.log(
+        `${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`
       );
       res.send(result);
     });
